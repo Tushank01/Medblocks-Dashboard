@@ -37,23 +37,6 @@ const PatientRegistration = () => {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Register New Patient</h1>
-        <p className="text-muted-foreground mb-4">
-          Fill out the form below to add a new patient to the database. 
-          Fields marked with an asterisk (*) are required.
-        </p>
-        
-        <Alert className="mb-6">
-          <div className="flex items-center gap-2">
-            <Info className="h-4 w-4" />
-            <AlertDescription>
-              Currently using: <span className="font-medium">{storageMode}</span>
-            </AlertDescription>
-          </div>
-        </Alert>
-      </div>
-      
       <PatientForm />
     </div>
   );

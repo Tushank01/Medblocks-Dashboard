@@ -11,8 +11,9 @@ const NavBar = () => {
     <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
       {/* Logo */}
       <Link to="/" className="flex items-center space-x-2">
-        <img               src="https://media.licdn.com/dms/image/v2/C4D0BAQGJMoKy3aHgBg/company-logo_200_200/company-logo_200_200/0/1674044315858?e=1752105600&v=beta&t=H_0QFM1TKdJj21RlSGWXKWqaYN48g_5x1elfeebXjpg"
+        <img src="https://media.licdn.com/dms/image/v2/C4D0BAQGJMoKy3aHgBg/company-logo_200_200/company-logo_200_200/0/1674044315858?e=1752105600&v=beta&t=H_0QFM1TKdJj21RlSGWXKWqaYN48g_5x1elfeebXjpg"
  alt="Logo" className="w-12 h-12" />
+
       </Link>
 
       {/* Center nav items */}

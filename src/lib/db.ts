@@ -168,9 +168,33 @@ export const executeQuery = async (sqlQuery: string) => {
       throw new Error('Query must be a string');
     }
     
-    // Add safety checks to prevent destructive queries
+    const originalQuery = sqlQuery;
     const lowerQuery = sqlQuery.toLowerCase().trim();
     
+    // Basic SQL syntax validation
+    if (!lowerQuery) {
+      throw new Error('Query cannot be empty');
+    }
+    
+    // Validate that the query contains a FROM clause if it's a SELECT query
+    if (lowerQuery.startsWith('select') && !lowerQuery.includes(' from ')) {
+      throw new Error('Invalid SELECT query: Missing FROM clause');
+    }
+
+    // Verify that SELECT queries have proper syntax
+    if (lowerQuery.startsWith('select')) {
+      const fromMatch = /\bfrom\s+(\w+)/i.exec(lowerQuery);
+      if (!fromMatch || !fromMatch[1]) {
+        throw new Error('Invalid SELECT query: Cannot determine target table');
+      }
+      
+      const tableName = fromMatch[1].toLowerCase();
+      if (tableName !== 'patients') {
+        throw new Error(`Table '${tableName}' does not exist. Only 'patients' table is available`);
+      }
+    }
+    
+    // Add safety checks to prevent destructive queries
     if (lowerQuery.includes('drop table') || 
         lowerQuery.includes('delete from') ||
         lowerQuery.includes('truncate')) {
@@ -183,7 +207,7 @@ export const executeQuery = async (sqlQuery: string) => {
     if (dbInstance) {
       try {
         // PGlite query
-        const result = await dbInstance.query(sqlQuery);
+        const result = await dbInstance.query(originalQuery);
         return result.rows;
       } catch (sqlError) {
         console.error('SQL execution error:', sqlError);
@@ -193,6 +217,12 @@ export const executeQuery = async (sqlQuery: string) => {
       // In-memory fallback - more complete query support
       // Load from localStorage if available
       loadInMemoryFromLocalStorage();
+      
+      // Check if query is valid for in-memory mode
+      // In-memory mode requires a valid SQL structure
+      if (!lowerQuery.includes('from patients')) {
+        throw new Error('Query must include "FROM patients" clause');
+      }
       
       // Very basic query filtering for in-memory mode
       let filteredPatients = [...inMemoryPatients];
