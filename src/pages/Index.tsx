@@ -39,13 +39,15 @@ const Index = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
         {/* Left column - Hero content */}
         <div className="flex flex-col justify-center space-y-6">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
-            <span className="text-blue-600">MedBlocks</span> 
-          </h1>
+          <div className="flex items-center space-x-4">
+            
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
+              <span className="text-blue-600">MedBlocks</span> 
+            </h1>
+          </div>
           <p className="text-lg text-muted-foreground max-w-lg">
-            A secure, efficient solution for managing patient records with
-            local database storage and intuitive interfaces.
-          </p>
+          A secure, efficient solution for better patient management. Our platform offers seamless storage and retrieval of patient data, 
+  ensuring that healthcare providers have instant access to accurate, up-to-date information, MedBlocks simplifies the management of medical records, making it easier to deliver quality care.          </p>
           {/* <div className="flex flex-col sm:flex-row gap-4 pt-2">
             <Button asChild size="lg" className="shadow-sm">
               <Link to="/register">Register Patient</Link>
@@ -104,26 +106,6 @@ const Index = () => {
               </CardContent>
             </Card>
           </Link>
-          
-          {/* <Link to="/stats" className="block">
-            <Card className="transition-all hover:shadow-md border-l-4 border-l-primary">
-              <CardContent className="p-6">
-                <div className="flex gap-4 items-start">
-                  <div className="bg-primary/10 p-3 rounded-lg text-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-medium mb-2">Analytics</h2>
-                    <p className="text-muted-foreground text-sm">
-                      Visualize patient trends and important metrics.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link> */}
         </div>
       </div>
       

@@ -11,8 +11,8 @@ const NavBar = () => {
     <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
       {/* Logo */}
       <Link to="/" className="flex items-center space-x-2">
-        <img src="/logo.svg" alt="Logo" className="w-6 h-6" />
-        <span className="text-lg font-semibold text-gray-900">Medblocks</span>
+        <img               src="https://media.licdn.com/dms/image/v2/C4D0BAQGJMoKy3aHgBg/company-logo_200_200/company-logo_200_200/0/1674044315858?e=1752105600&v=beta&t=H_0QFM1TKdJj21RlSGWXKWqaYN48g_5x1elfeebXjpg"
+ alt="Logo" className="w-12 h-12" />
       </Link>
 
       {/* Center nav items */}
@@ -33,10 +33,9 @@ const NavBar = () => {
 
       {/* CTA Button */}
       <Link
-        to="/courses"
         className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-blue-700"
       >
-        Explore courses
+        Download App
       </Link>
     </div>
   // </nav>
