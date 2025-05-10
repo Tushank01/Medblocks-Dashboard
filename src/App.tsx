@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import NavBar from "./components/NavBar";
 import { useEffect, useState } from "react";
 import { initDB } from "./lib/db";
+import LoaderOne from "./components/ui/loader";
 
 const queryClient = new QueryClient();
 
@@ -20,10 +20,8 @@ const App = () => {
   useEffect(() => {
     const setupApp = async () => {
       try {
-        // Try to initialize DB (may fall back to in-memory)
         await initDB();
-        
-        // Check if we have localStorage data
+
         try {
           localStorage.getItem('meditrack_test');
         } catch (e) {
@@ -31,14 +29,11 @@ const App = () => {
         }
       } catch (error) {
         console.error('Error during setup:', error);
-        // Continue anyway, we'll use in-memory fallback
       }
-      
-      // Set app as ready regardless of DB initialization success
-      // since we have in-memory fallback
+
       setAppReady(true);
     };
-    
+
     setupApp().catch(console.error);
   }, []);
 
@@ -60,10 +55,7 @@ const App = () => {
                 </Routes>
               ) : (
                 <div className="flex h-[70vh] items-center justify-center">
-                  <div className="text-center animate-pulse">
-                    <h2 className="text-2xl font-semibold mb-4">Initializing Application...</h2>
-                    <p className="text-muted-foreground">Please wait while we set up your environment.</p>
-                  </div>
+                  <LoaderOne /> 
                 </div>
               )}
             </div>
