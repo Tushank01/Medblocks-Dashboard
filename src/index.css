@@ -1,0 +1,161 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 50% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 210 79% 46%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 160 64% 52%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 210 40% 90%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 210 79% 46%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 210 50% 98%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 210 79% 46%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 210 40% 90%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 210 79% 46%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .medical-card {
+    @apply bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300;
+  }
+  
+  .medical-input {
+    @apply border border-input bg-transparent px-3 py-2 text-sm 
+    ring-offset-background file:border-0 file:bg-transparent 
+    file:text-sm file:font-medium placeholder:text-muted-foreground 
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring 
+    focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50
+    rounded-md;
+  }
+
+  .medical-label {
+    @apply text-sm font-medium text-foreground pb-1.5 block;
+  }
+
+  .medical-button {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium
+    ring-offset-background transition-colors focus-visible:outline-none 
+    focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+    disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .medical-button-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2;
+  }
+
+  .medical-button-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 px-4 py-2;
+  }
+
+  .medical-button-outline {
+    @apply border border-input bg-background hover:bg-accent hover:text-accent-foreground px-4 py-2;
+  }
+  
+  /* New elegant UI components */
+  .elegant-card {
+    @apply bg-white rounded-lg border border-border shadow-sm hover:shadow-md transition-all duration-300;
+  }
+  
+  .feature-card {
+    @apply bg-gradient-to-br from-white to-muted/30 rounded-lg border border-border p-6 hover:shadow-md transition-all duration-300 hover:translate-y-[-2px];
+  }
+  
+  .text-gradient-primary {
+    @apply bg-gradient-to-br from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent;
+  }
+  
+  .hero-section {
+    @apply py-12 px-4 md:py-20 md:px-8 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl mb-8 border border-border/50;
+  }
+  
+  .action-button {
+    @apply inline-flex items-center justify-center rounded-lg px-5 py-3 text-sm font-medium
+    bg-gradient-to-r from-primary to-primary/90 text-primary-foreground
+    hover:from-primary/90 hover:to-primary/80 transition-all duration-300
+    shadow-sm hover:shadow focus:ring-2 focus:ring-primary/25 focus:outline-none;
+  }
+  
+  .section-title {
+    @apply text-2xl font-bold text-foreground mb-2;
+  }
+  
+  .section-subtitle {
+    @apply text-lg text-muted-foreground mb-6 max-w-2xl;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+}
