@@ -9,7 +9,7 @@ export function MedicalParticles() {
       quantity={50}
       staticity={40}
       ease={90}
-      color="#black" // Using a more elegant purple color
+      color="#black" 
       size={0.6}
       vx={0.1}
       vy={0.1}
