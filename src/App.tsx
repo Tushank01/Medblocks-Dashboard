@@ -10,7 +10,6 @@ import NotFound from "./pages/NotFound";
 import NavBar from "./components/NavBar";
 import { useEffect, useState } from "react";
 import { initDB } from "./lib/db";
-import LoaderOne from "./components/ui/loader";
 
 const queryClient = new QueryClient();
 
@@ -55,7 +54,6 @@ const App = () => {
                 </Routes>
               ) : (
                 <div className="flex h-[70vh] items-center justify-center">
-                  <LoaderOne /> 
                 </div>
               )}
             </div>
