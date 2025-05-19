@@ -1,41 +1,121 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { getPatients, countPatients, useDatabaseUpdates } from "@/lib/db";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import PatientCard from "@/components/PatientCard";
 import { Patient } from "@/lib/schemas";
 import { ChevronRight, FileText, PlusCircle, Search, UsersRound } from "lucide-react";
 import { MedicalParticles } from "@/components/ui/medical-particles";
 import { RetroGrid } from "@/components/ui/retro-grid";
 
-
 const Index = () => {
   const [recentPatients, setRecentPatients] = useState<Patient[]>([]);
   const [totalPatients, setTotalPatients] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
+  const fetchCountRef = useRef(0);
   
   // Listen to database updates from other tabs
   const dbUpdates = useDatabaseUpdates();
   
+  // Create a memoized fetch function with better error handling
+  const fetchData = useCallback(async (source = "unknown") => {
+    try {
+      fetchCountRef.current += 1;
+      console.log(`[Index] Fetching data (count: ${fetchCountRef.current}, source: ${source})`);
+      
+      setLoading(true);
+      setError(null);
+      
+      // Fetch both simultaneously
+      const [patients, count] = await Promise.all([
+        getPatients(10, 0),
+        countPatients()
+      ]);
+      
+      console.log(`[Index] Fetched ${patients.length} patients, total count: ${count}`);
+      
+      setRecentPatients(patients);
+      setTotalPatients(count);
+    } catch (error) {
+      console.error("[Index] Error fetching data:", error);
+      setError(error instanceof Error ? error.message : "Failed to fetch data");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  
+  // Fetch data whenever the location (route) changes
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const patients = await getPatients(10, 0);
-        const count = await countPatients();
-        
-        setRecentPatients(patients);
-        setTotalPatients(count);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
+    console.log("[Index] Location changed, fetching data");
+    fetchData("location-change");
+  }, [location.pathname, fetchData]);
+  
+  // Fetch data on database updates
+  useEffect(() => {
+    if (dbUpdates) {
+      console.log("[Index] Database update detected, fetching data");
+      fetchData("db-update");
+    }
+  }, [dbUpdates, fetchData]);
+  
+  // Initial fetch on mount
+  useEffect(() => {
+    console.log("[Index] Component mounted, initial fetch");
+    fetchData("initial-mount");
+  }, [fetchData]);
+  
+  // Alternative: Use an interval to periodically refresh data (optional)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log("[Index] Periodic refresh");
+      fetchData("periodic-refresh");
+    }, 30000); // Refresh every 30 seconds
+    
+    return () => clearInterval(interval);
+  }, [fetchData]);
+  
+  // Focus and visibility listeners for additional refresh triggers
+  useEffect(() => {
+    const handleFocus = () => {
+      console.log("[Index] Window focused, fetching data");
+      fetchData("window-focus");
+    };
+    
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log("[Index] Page visible, fetching data");
+        fetchData("visibility-change");
       }
     };
     
-    fetchData();
-  }, [dbUpdates]); // Re-fetch when database updates occur
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [fetchData]);
+  
+  // Manual refresh function (you can call this from a button if needed)
+  const handleManualRefresh = () => {
+    console.log("[Index] Manual refresh triggered");
+    fetchData("manual-refresh");
+  };
+  
+  // Debug info (remove in production)
+  useEffect(() => {
+    console.log("[Index] State updated:", {
+      loading,
+      recentPatientsCount: recentPatients.length,
+      totalPatients,
+      error,
+      fetchCount: fetchCountRef.current
+    });
+  }, [loading, recentPatients.length, totalPatients, error]);
   
   return (
     <div className="space-y-12">
@@ -165,6 +245,17 @@ const Index = () => {
               </p>
             </div>
           </div>
+          
+          {error && (
+            <Card className="mb-6 border-red-200 bg-red-50">
+              <CardContent className="p-6">
+                <p className="text-red-700">Error loading data: {error}</p>
+                <Button onClick={handleManualRefresh} variant="outline" className="mt-2">
+                  Retry
+                </Button>
+              </CardContent>
+            </Card>
+          )}
           
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
