@@ -20,7 +20,7 @@ const Index = () => {
   // Listen to database updates from other tabs
   const dbUpdates = useDatabaseUpdates();
   
-  // Create a memoized fetch function with better error handling
+  // Create a more robust fetch function for production
   const fetchData = useCallback(async (source = "unknown") => {
     try {
       fetchCountRef.current += 1;
@@ -29,19 +29,30 @@ const Index = () => {
       setLoading(true);
       setError(null);
       
-      // Fetch both simultaneously
-      const [patients, count] = await Promise.all([
-        getPatients(10, 0),
-        countPatients()
+      // Add timeout for production environments
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Request timeout')), 10000);
+      });
+      
+      // Fetch both simultaneously with timeout
+      const [patients, count] = await Promise.race([
+        Promise.all([
+          getPatients(10, 0),
+          countPatients()
+        ]),
+        timeoutPromise
       ]);
       
       console.log(`[Index] Fetched ${patients.length} patients, total count: ${count}`);
       
-      setRecentPatients(patients);
-      setTotalPatients(count);
+      setRecentPatients(patients || []);
+      setTotalPatients(count || 0);
     } catch (error) {
       console.error("[Index] Error fetching data:", error);
       setError(error instanceof Error ? error.message : "Failed to fetch data");
+      // Set default values on error
+      setRecentPatients([]);
+      setTotalPatients(0);
     } finally {
       setLoading(false);
     }
@@ -51,30 +62,43 @@ const Index = () => {
   useEffect(() => {
     console.log("[Index] Location changed, fetching data");
     fetchData("location-change");
-  }, [location.pathname, fetchData]);
+  }, [location.pathname, location.key, fetchData]); // Added location.key to detect navigation
   
   // Fetch data on database updates
   useEffect(() => {
-    if (dbUpdates) {
+    if (dbUpdates !== undefined) { // Check for undefined instead of truthy
       console.log("[Index] Database update detected, fetching data");
       fetchData("db-update");
     }
   }, [dbUpdates, fetchData]);
   
-  // Initial fetch on mount
+  // Initial fetch on mount - simplified
   useEffect(() => {
     console.log("[Index] Component mounted, initial fetch");
     fetchData("initial-mount");
-  }, [fetchData]);
+  }, []); // Removed fetchData dependency to avoid multiple calls
   
-  // Alternative: Use an interval to periodically refresh data (optional)
+  // Alternative: Force refresh on route navigation (Vercel-friendly)
   useEffect(() => {
-    const interval = setInterval(() => {
-      console.log("[Index] Periodic refresh");
-      fetchData("periodic-refresh");
-    }, 30000); // Refresh every 30 seconds
+    // Force a data refresh whenever we navigate to this route
+    const timer = setTimeout(() => {
+      fetchData("route-navigation");
+    }, 100); // Small delay to ensure component is fully mounted
     
-    return () => clearInterval(interval);
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+  
+  // Alternative: Use window.addEventListener for storage events (cross-tab updates)
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key && e.key.includes('patient')) {
+        console.log("[Index] Storage change detected, fetching data");
+        fetchData("storage-change");
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, [fetchData]);
   
   // Focus and visibility listeners for additional refresh triggers
@@ -119,6 +143,8 @@ const Index = () => {
   
   return (
     <div className="space-y-12">
+
+      
       <section className=" rounded-2xl overflow-hidden relative border border-border/50 shadow-2xl">
         <div className="relative h-full w-full">
           <RetroGrid />
